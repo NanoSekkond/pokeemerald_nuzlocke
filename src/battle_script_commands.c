@@ -326,6 +326,14 @@ static void Cmd_finishaction(void);
 static void Cmd_finishturn(void);
 static void Cmd_trainerslideout(void);
 
+const u16 sLevelCapFlags[NUM_LEVEL_CAPS] =
+{
+    FLAG_BADGE01_GET, FLAG_BADGE02_GET, FLAG_BADGE03_GET, FLAG_BADGE04_GET,
+    FLAG_BADGE05_GET, FLAG_BADGE06_GET, FLAG_BADGE07_GET, FLAG_BADGE08_GET
+};
+
+const u16 sLevelCaps[NUM_LEVEL_CAPS + 1] = {15, 19, 24, 29, 31, 33, 42, 46, 55};
+
 void (* const gBattleScriptingCommandsTable[])(void) =
 {
     Cmd_attackcanceler,                          //0x0
@@ -3252,6 +3260,21 @@ static void Cmd_jumpiftype(void)
         gBattlescriptCurrInstr += 7;
 }
 
+static int GetPkmnExpMultiplier(u8 level) {
+    int levelCap;
+    int i;
+    for (i = 0; i < NUM_LEVEL_CAPS + 1; i++) {
+        levelCap = sLevelCaps[i];
+        if (i == 8) {
+            break;
+        }
+        if (!FlagGet(sLevelCapFlags[i])) {
+            break;
+        }
+    }
+    return level < levelCap;
+}
+
 static void Cmd_getexp(void)
 {
     u16 item;
@@ -3366,13 +3389,14 @@ static void Cmd_getexp(void)
 
                 if (GetMonData(&gPlayerParty[gBattleStruct->expGetterMonId], MON_DATA_HP))
                 {
+                    int expMultiplier = GetPkmnExpMultiplier(gPlayerParty[gBattleStruct->expGetterMonId].level);
                     if (gBattleStruct->sentInPokes & 1)
-                        gBattleMoveDamage = *exp;
+                        gBattleMoveDamage = *exp * expMultiplier;
                     else
                         gBattleMoveDamage = 0;
 
                     if (holdEffect == HOLD_EFFECT_EXP_SHARE)
-                        gBattleMoveDamage += gExpShareExp;
+                        gBattleMoveDamage += gExpShareExp * expMultiplier;
                     if (holdEffect == HOLD_EFFECT_LUCKY_EGG)
                         gBattleMoveDamage = (gBattleMoveDamage * 150) / 100;
                     if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
@@ -3503,12 +3527,13 @@ static void Cmd_getexp(void)
         }
         break;
     case 5: // looper increment
-        if (gBattleMoveDamage) // there is exp to give, goto case 3 that gives exp
+        if (gBattleMoveDamage && GetPkmnExpMultiplier(gPlayerParty[gBattleStruct->expGetterMonId].level)) // there is exp to give, goto case 3 that gives exp
         {
             gBattleScripting.getexpState = 3;
         }
         else
         {
+            gBattleMoveDamage = 0;
             gBattleStruct->expGetterMonId++;
             if (gBattleStruct->expGetterMonId < PARTY_SIZE)
                 gBattleScripting.getexpState = 2; // loop again

@@ -868,6 +868,18 @@ const struct Item gItems[] =
         .fieldUseFunc = ItemUseOutOfBattle_RareCandy,
     },
 
+    [ITEM_CANDY_BAG] =
+    {
+        .name = _("CANDY BAG"),
+        .itemId = ITEM_CANDY_BAG,
+        .price = 0,
+        .description = sCandyBagDesc,
+        .importance = 1,
+        .pocket = POCKET_KEY_ITEMS,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_CandyBag,
+    },
+
     [ITEM_PP_UP] =
     {
         .name = _("PP UP"),
