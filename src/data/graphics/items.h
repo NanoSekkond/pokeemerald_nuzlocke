@@ -142,6 +142,8 @@ const u32 gItemIconPalette_Calcium[] = INCBIN_U32("graphics/items/icon_palettes/
 
 const u32 gItemIcon_RareCandy[] = INCBIN_U32("graphics/items/icons/rare_candy.4bpp.lz");
 const u32 gItemIconPalette_RareCandy[] = INCBIN_U32("graphics/items/icon_palettes/rare_candy.gbapal.lz");
+const u32 gItemIcon_CandyBag[] = INCBIN_U32("graphics/items/icons/candy_bag.4bpp.lz");
+const u32 gItemIconPalette_CandyBag[] = INCBIN_U32("graphics/items/icon_palettes/candy_bag.gbapal.lz");
 
 const u32 gItemIcon_PPUp[] = INCBIN_U32("graphics/items/icons/pp_up.4bpp.lz");
 const u32 gItemIconPalette_PPUp[] = INCBIN_U32("graphics/items/icon_palettes/pp_up.gbapal.lz");
